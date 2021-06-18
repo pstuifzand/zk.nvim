@@ -80,6 +80,8 @@ function M.make_link_text(title, path)
     -- https://github.com/vimwiki/vimwiki/tree/dev#basic-markup
     return string.format("[[%s|%s]]", vim.fn.shellescape(path), title)
   elseif zk_config.link_format == "simple" then
+    -- TODO: Should link to file relative to default_notebook_path,
+    --       this uses the basename now
     basename = vim.fn.fnamemodify(path, ":t:r")
     return string.format("[[%s]]", basename)
   end
