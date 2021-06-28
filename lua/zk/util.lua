@@ -83,6 +83,8 @@ function M.make_link_text(title, path)
     -- TODO: look into supporting link | description:
     -- https://github.com/vimwiki/vimwiki/tree/dev#basic-markup
     return string.format("[[%s|%s]]", vim.fn.shellescape(path), title)
+  elseif zk_config.link_format == "simple" then
+    return string.format("[[%s]]", vim.fn.fnamemodify(path, ":t:r"))
   end
 end
 
