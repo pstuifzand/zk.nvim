@@ -47,10 +47,13 @@ require("zk").setup({
   default_keymaps = true,
   default_notebook_path = vim.env.ZK_NOTEBOOK_DIR or "",
   fuzzy_finder = "fzf", -- or "telescope"
-  link_format = "markdown" -- or "wiki"
+  link_format = "markdown" -- or "wiki", or "simple"
 })
 ```
 
+### Format links
+
+The `link_format` `markdown` will return a link in the format [title](file). The format `wiki` will return `[[file|title]]`. The format `simple` will return `[[basename]]`.
 
 ## Usage
 
