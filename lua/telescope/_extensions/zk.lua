@@ -65,9 +65,16 @@ local telescope_zk_notes = function(opts)
         }, mt_string_entry)
     end
 
+    local notebook = opts.notebook
+    if notebook == nil then
+        notebook = '.'
+    end
+
+    local cmd = { "zk", "list", "--footer", "\n", "-q", "-P", "--format", "{{ path }}\t{{ title }}", notebook }
+
     pickers.new({}, {
         prompt_title = "Zk notes",
-        finder = finders.new_oneshot_job(vim.tbl_flatten({ "zk", "list", "-q", "-P", "--format", "{{ path }}\t{{ title }}" }), opts),
+        finder = finders.new_oneshot_job(vim.tbl_flatten(cmd), opts),
         sorter = conf.generic_sorter({}),
         previewer = conf.file_previewer(opts),
         attach_mappings = function(_, map)
