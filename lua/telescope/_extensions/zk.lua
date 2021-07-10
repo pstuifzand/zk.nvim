@@ -53,13 +53,12 @@ local create_entry_maker = function()
             return rawget(t, rawget(lookup_keys, k))
         end
     }
-    -- TODO: can I use _G.zk_config here?
     return function(line)
         local tmp_table = vim.split(line, "\t");
         return setmetatable({
             line,
             tmp_table[2] or "",
-            _G.zk_config.default_notebook_path .. "/" .. tmp_table[1] or "",
+            tmp_table[1] or "",
         }, mt_string_entry)
     end
 end
@@ -69,7 +68,13 @@ local telescope_zk_notes = function(opts)
 
     opts.entry_maker = create_entry_maker()
 
-    local cmd = { "zk", "list", "-q", "-P", "--format", "{{ path }}\t{{ title }}" }
+    local cmd = {
+        "zk", "list",
+        "--footer", "\n",
+        "-q",
+        "-P",
+        "--format", "{{ path }}\t{{ title }}"
+    }
 
     pickers.new({}, {
         prompt_title = "Zk notes",
