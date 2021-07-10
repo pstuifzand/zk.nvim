@@ -68,13 +68,19 @@ local telescope_zk_notes = function(opts)
 
     opts.entry_maker = create_entry_maker()
 
-    local cmd = {
+    local notebook = {}
+    if opts.notebook ~= nil then
+        notebook = {opts.notebook}
+    end
+
+    local cmd = vim.tbl_flatten({
         "zk", "list",
         "--footer", "\n",
         "-q",
         "-P",
-        "--format", "{{ path }}\t{{ title }}"
-    }
+        "--format", "{{ path }}\t{{ title }}",
+        notebook
+    })
 
     pickers.new({}, {
         prompt_title = "Zk notes",
@@ -96,9 +102,9 @@ local telescope_zk_grep = function(opts)
     opts.cwd = opts.cwd and vim.fn.expand(opts.cwd) or vim.loop.cwd()
     opts.entry_maker = create_entry_maker()
 
-    local notebook = '.'
-    if opts.notebook ~= nil then
-        notebook = opts.notebook
+    local notebook = {}
+    if opts.notebook then
+        notebook = {opts.notebook}
     end
 
     local zk_notes_grep = finders.new_job(function(prompt)
@@ -109,17 +115,16 @@ local telescope_zk_grep = function(opts)
             "-q",
             "-P",
             "--format", "{{ path }}\t{{ title }}",
-            notebook
         }
         if not prompt or prompt == "" then
-            return basic_cmd
+            return vim.tbl_flatten({basic_cmd, notebook})
         end
         local parts = vim.split(prompt, "%s")
-        for i, part in pairs(parts) do
+        for i, part in ipairs(parts) do
             parts[i] = part .. "*"
         end
-        prompt = table.concat(parts, " ")
-        return vim.tbl_flatten({basic_cmd, {"-m", prompt }})
+        local query = table.concat(parts, " ")
+        return vim.tbl_flatten({basic_cmd, {"-m", query}, notebook})
       end,
       opts.entry_maker,
       opts.max_results,
